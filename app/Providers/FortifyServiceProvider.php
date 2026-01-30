@@ -35,6 +35,23 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
 
+        // Custom post-login redirect based on user role
+        Fortify::redirects('login', function () {
+            $user = auth()->user();
+            
+            if ($user && strtolower($user->role) === 'customer') {
+                return route('landing');
+            }
+            
+            // Default for employees
+            return route('dashboard');
+        });
+
+        // Custom post-logout redirect to login page
+        Fortify::redirects('logout', function () {
+            return route('login');
+        });
+
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 

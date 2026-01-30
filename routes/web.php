@@ -5,25 +5,21 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Products\Index as ProductsIndex;
 use App\Http\Controllers\ProductController;
 
-use App\Livewire\Admin\Products\Index as AdminProductsIndex;
-use App\Livewire\Admin\Products\Create as AdminProductsCreate;
-use App\Livewire\Admin\Products\Edit as AdminProductsEdit;
+use App\Livewire\Employee\ManageProducts;
 
 use App\Http\Controllers\Auth\GoogleController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 // Public product browsing
 Route::get('/products', ProductsIndex::class)->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
-// Admin/Employee product management (RBAC protected)
-Route::middleware(['auth', 'verified', 'role:employee,admin'])->group(function () {
-    Route::get('/admin/products', AdminProductsIndex::class)->name('admin.products.index');
-    Route::get('/admin/products/create', AdminProductsCreate::class)->name('admin.products.create');
-    Route::get('/admin/products/{product}/edit', AdminProductsEdit::class)->name('admin.products.edit');
+// Employee product management - using permission-based access control (single page)
+Route::middleware(['auth', 'verified', 'permission:view-dashboard'])->group(function () {
+    Route::get('/employee/manage-products', ManageProducts::class)->name('employee.manage-products');
 });
 
 Route::middleware([
@@ -52,3 +48,35 @@ Route::get('/auth/google/token', function () {
         'user' => $user,
     ]);
 })->middleware('auth');
+
+// Customer routes - using permission-based access control
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+    'permission:buy-products', // Permission-based instead of role-based
+])->group(function () {
+    Route::view('/landing', 'landing')->name('landing');
+    Route::view('/membership', 'membership')->name('membership');
+    
+    // Animal category routes - redirect to products page with filter
+    Route::get('/cats', function () {
+        return redirect()->route('products.index', ['animal' => 'cat']);
+    })->name('cats');
+    
+    Route::get('/dogs', function () {
+        return redirect()->route('products.index', ['animal' => 'dog']);
+    })->name('dogs');
+    
+    Route::get('/rabbits', function () {
+        return redirect()->route('products.index', ['animal' => 'rabbit']);
+    })->name('rabbits');
+    
+    Route::get('/hamsters', function () {
+        return redirect()->route('products.index', ['animal' => 'hamster']);
+    })->name('hamsters');
+    
+    Route::get('/seasonal', function () {
+        return redirect()->route('products.index', ['category' => 'seasonal']);
+    })->name('seasonal');
+});

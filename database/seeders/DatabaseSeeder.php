@@ -43,5 +43,10 @@ class DatabaseSeeder extends Seeder
                 'role' => 'customer',
             ]
         );
+
+        // Seed roles, permissions, and migrate users to Spatie
+        $this->call([
+            RolesAndPermissionsSeeder::class,
+        ]);
     }
 }
