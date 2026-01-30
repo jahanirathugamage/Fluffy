@@ -22,7 +22,6 @@ class Index extends Component
     #[Url]
     public $sort = 'name_asc';
 
-    // Filters (Array state needs explicit URL handling usually, or generic array support)
     #[Url]
     public $selectedCategories = [];
 
@@ -38,41 +37,29 @@ class Index extends Component
     #[Url]
     public $maxPrice = '';
 
-    #[Url]
-    public $sustainable = false;
+    public $showFilters = false;
 
-    // Legacy query params support (e.g. /products?animal=cat)
-    // We map these to the filter arrays in mount
     public function mount()
     {
-        // specific query params from nav links
-        if (request()->has('animal')) {
-            // Use LIKE for simple case-insensitive match if collation allows, or just strtolower logic
-            // Assuming DB names are "Cat", "Dog"
-            $animalName = request('animal');
-            $animal = Animal::where('name', 'LIKE', $animalName)->first();
-            
-            if ($animal && !in_array($animal->id, $this->selectedAnimals)) {
-                $this->selectedAnimals[] = $animal->id;
+        $animalParam = request()->query('animal');      // cat, dog, rabbit, hamster
+        $categoryParam = request()->query('category');  // accessories, grooming, sustainable, etc.
+
+        // SET animal filter
+        if (!empty($animalParam)) {
+            $animal = Animal::whereRaw('LOWER(name) = ?', [strtolower($animalParam)])->first();
+            if ($animal) {
+                $this->selectedAnimals = [$animal->id];
             }
         }
 
-        if (request()->has('category')) {
-             // e.g. seasonal
-             $categoryName = request('category');
-             $category = Category::where('name', 'LIKE', $categoryName)->first();
-             
-             if ($category && !in_array($category->id, $this->selectedCategories)) {
-                 $this->selectedCategories[] = $category->id;
-             }
-        }
-
-        if (request()->has('sustainable')) {
-            $this->sustainable = true;
+        // SET category filter
+        if (!empty($categoryParam)) {
+            $category = Category::whereRaw('LOWER(name) = ?', [strtolower($categoryParam)])->first();
+            if ($category) {
+                $this->selectedCategories = [$category->id];
+            }
         }
     }
-
-    public $showFilters = false;
 
     #[On('filtersApplied')]
     public function applyFilters($filters)
@@ -80,9 +67,9 @@ class Index extends Component
         $this->selectedCategories = $filters['categories'] ?? [];
         $this->selectedAnimals = $filters['animals'] ?? [];
         $this->inStockOnly = $filters['inStockOnly'] ?? false;
-        $this->minPrice = $filters['minPrice'];
-        $this->maxPrice = $filters['maxPrice'];
-        
+        $this->minPrice = $filters['minPrice'] ?? '';
+        $this->maxPrice = $filters['maxPrice'] ?? '';
+
         $this->showFilters = false;
         $this->resetPage();
     }
@@ -103,51 +90,56 @@ class Index extends Component
         $this->resetPage();
     }
 
+    private function normalizeToArray($value): array
+    {
+        if (is_array($value)) return $value;
+        if ($value === null || $value === '') return [];
+        return [$value];
+    }
+
     public function render()
     {
         $query = Product::query()
             ->with(['animal', 'category', 'specifications']);
 
         // Search
-        if ($this->search) {
+        if (!empty($this->search)) {
             $query->where('name', 'like', '%' . $this->search . '%');
         }
 
-        // Filters
-        if (!empty($this->selectedAnimals)) {
-             // Handle array of IDs
-             // If string comes from URL, livewire casts to array if property is array?
-             // Safest is to ensure array.
-             $animals = is_array($this->selectedAnimals) ? $this->selectedAnimals : [$this->selectedAnimals];
-             $query->whereIn('animal_id', $animals);
+        // Filters: animals
+        $animalIds = $this->normalizeToArray($this->selectedAnimals);
+        if (!empty($animalIds)) {
+            $query->whereIn('animal_id', $animalIds);
         }
 
-        if (!empty($this->selectedCategories)) {
-             $cats = is_array($this->selectedCategories) ? $this->selectedCategories : [$this->selectedCategories];
-             $query->whereIn('category_id', $cats);
+        // Filters: categories
+        $categoryIds = $this->normalizeToArray($this->selectedCategories);
+        if (!empty($categoryIds)) {
+            $query->whereIn('category_id', $categoryIds);
         }
 
+        // In stock only
         if ($this->inStockOnly) {
-            $query->whereHas('specifications', function($q) {
+            $query->whereHas('specifications', function ($q) {
                 $q->where('stock', '>', 0);
             });
         }
 
-        if ($this->minPrice !== '' && $this->minPrice > 0) {
-            $query->whereHas('specifications', function($q) {
-                $q->where('price', '>=', $this->minPrice);
+        // Min price
+        if ($this->minPrice !== '' && (float)$this->minPrice > 0) {
+            $min = (float)$this->minPrice;
+            $query->whereHas('specifications', function ($q) use ($min) {
+                $q->where('price', '>=', $min);
             });
         }
 
-        if ($this->maxPrice !== '' && $this->maxPrice > 0) {
-            $query->whereHas('specifications', function($q) {
-                $q->where('price', '<=', $this->maxPrice);
+        // Max price
+        if ($this->maxPrice !== '' && (float)$this->maxPrice > 0) {
+            $max = (float)$this->maxPrice;
+            $query->whereHas('specifications', function ($q) use ($max) {
+                $q->where('price', '<=', $max);
             });
-        }
-
-        // Sustainable Filter
-        if ($this->sustainable) {
-            $query->where('is_sustainable', true);
         }
 
         // Sorting
@@ -156,27 +148,34 @@ class Index extends Component
                 ->join('specifications', 'products.id', '=', 'specifications.product_id')
                 ->groupBy('products.id')
                 ->orderByRaw('MIN(specifications.price) ASC'),
-                
+
             'price_desc' => $query->select('products.*')
-                 ->join('specifications', 'products.id', '=', 'specifications.product_id')
-                 ->groupBy('products.id')
-                 ->orderByRaw('MAX(specifications.price) DESC'),
-            
+                ->join('specifications', 'products.id', '=', 'specifications.product_id')
+                ->groupBy('products.id')
+                ->orderByRaw('MAX(specifications.price) DESC'),
+
             default => $query->orderBy('name'),
         };
 
-        // Dynamic Title
+        // Page title
         $pageTitle = 'All Products';
-        if (!empty($this->selectedAnimals)) {
-             $animals = Animal::whereIn('id', is_array($this->selectedAnimals) ? $this->selectedAnimals : [$this->selectedAnimals])->pluck('name');
-             if ($animals->isNotEmpty()) {
-                 $pageTitle = $animals->join(', ');
-             }
-        } elseif (!empty($this->selectedCategories)) {
-             $cats = Category::whereIn('id', is_array($this->selectedCategories) ? $this->selectedCategories : [$this->selectedCategories])->pluck('name');
-             if ($cats->isNotEmpty()) {
-                 $pageTitle = $cats->join(', ');
-             }
+
+        $animalNames = collect();
+        if (!empty($animalIds)) {
+            $animalNames = Animal::whereIn('id', $animalIds)->pluck('name');
+        }
+
+        $categoryNames = collect();
+        if (!empty($categoryIds)) {
+            $categoryNames = Category::whereIn('id', $categoryIds)->pluck('name');
+        }
+
+        if ($animalNames->isNotEmpty() && $categoryNames->isNotEmpty()) {
+            $pageTitle = $animalNames->first() . ' ' . $categoryNames->first();
+        } elseif ($animalNames->isNotEmpty()) {
+            $pageTitle = $animalNames->first() . ' Products';
+        } elseif ($categoryNames->isNotEmpty()) {
+            $pageTitle = $categoryNames->first();
         }
 
         return view('livewire.products.index', [

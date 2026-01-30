@@ -9,20 +9,21 @@ class HamburgerMenu extends Component
 {
     public $isOpen = false;
     public $currentLevel = 'main'; // main, otherPets, cats, dogs, rabbit, hamster
-    public $animalContext = null; // Current animal name for level 3
+    public $animalContext = null;
 
     protected $listeners = ['openHamburgerMenu' => 'open'];
 
     public function open()
     {
         $this->isOpen = true;
-        $this->currentLevel = 'main'; // Reset to main when opening
+        $this->currentLevel = 'main';
+        $this->animalContext = null;
     }
 
     public function close()
     {
         $this->isOpen = false;
-        $this->currentLevel = 'main'; // Reset to main when closing
+        $this->currentLevel = 'main';
         $this->animalContext = null;
     }
 
@@ -34,7 +35,6 @@ class HamburgerMenu extends Component
 
     public function goBack()
     {
-        // Navigate back based on current level
         if (in_array($this->currentLevel, ['cats', 'dogs'])) {
             $this->currentLevel = 'main';
             $this->animalContext = null;
@@ -45,16 +45,6 @@ class HamburgerMenu extends Component
             $this->currentLevel = 'main';
             $this->animalContext = null;
         }
-    }
-
-    public function goToProducts($animal, $category = null)
-    {
-        $params = ['animal' => $animal];
-        if ($category) {
-            $params['category'] = $category;
-        }
-        $this->close();
-        return redirect()->route('products.index', $params);
     }
 
     public function logout()
