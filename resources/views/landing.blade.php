@@ -1,7 +1,6 @@
 <x-app-layout>
     <div class="font-['Montserrat']">
-        {{-- ✅ Navbar (Livewire) --}}
-        <livewire:fluffy.navbar />
+
 
         {{-- ✅ Hero Carousel (Livewire) --}}
         <livewire:landing.hero-carousel />

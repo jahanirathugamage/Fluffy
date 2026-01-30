@@ -14,6 +14,7 @@ class Product extends Model
         'benefits',
         'nutrition',
         'image_path',
+        'is_sustainable',
     ];
 
     public function animal()

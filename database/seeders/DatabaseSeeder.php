@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AnimalSeeder::class,
             CategorySeeder::class,
+            ProductSeeder::class,
         ]);
 
         // Seed demo users for marking/demo (RBAC evidence)

@@ -21,6 +21,11 @@
         <x-banner />
 
         <div class="bg-white">
+            {{-- Customer Navigation --}}
+            @livewire('fluffy.navbar')
+            @livewire('fluffy.hamburger-menu')
+            @livewire('cart.cart-drawer')
+
             {{-- Employee Navigation (only for employees) --}}
             @auth
                 @can('view-dashboard')

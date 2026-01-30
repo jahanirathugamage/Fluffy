@@ -10,12 +10,15 @@ use App\Livewire\Employee\ManageProducts;
 use App\Http\Controllers\Auth\GoogleController;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('landing');
+    }
     return redirect()->route('login');
-});
+})->name('home');
 
 // Public product browsing
 Route::get('/products', ProductsIndex::class)->name('products.index');
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{product}', \App\Livewire\Products\ProductDetail::class)->name('products.show');
 
 // Employee product management - using permission-based access control (single page)
 Route::middleware(['auth', 'verified', 'permission:view-dashboard'])->group(function () {
@@ -79,4 +82,15 @@ Route::middleware([
     Route::get('/seasonal', function () {
         return redirect()->route('products.index', ['category' => 'seasonal']);
     })->name('seasonal');
+
+    Route::get('/favorites', \App\Livewire\Favorites\Index::class)->name('favorites.index');
+    
+    // Cart routes
+    Route::get('/cart', \App\Livewire\Cart\CartDrawer::class)->name('cart.index');
+    
+    // Profile route
+    Route::view('/profile', 'profile.show')->name('profile');
+    
+    // Orders route
+    Route::view('/orders', 'orders.index')->name('orders.index');
 });

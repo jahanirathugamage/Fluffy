@@ -82,7 +82,7 @@
         </div>
 
         {{-- Bottom Profile/Logout Button (Mobile) --}}
-        <div class="md:hidden absolute bottom-0 left-0 w-full h-[119px] bg-white flex items-center justify-center">
+        <div class="absolute bottom-0 left-0 w-full h-[119px] bg-white flex items-center justify-center">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="w-[90px] h-[35px] border-[2px] border-black bg-white text-black font-[Montserrat] text-[16px] flex items-center justify-center hover:font-bold">
