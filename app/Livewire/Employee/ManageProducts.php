@@ -4,6 +4,7 @@ namespace App\Livewire\Employee;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use App\Models\Product;
 use App\Models\Specification;
@@ -19,9 +20,26 @@ class ManageProducts extends Component
     // Modal states
     public $showAddModal = false;
     public $showEditModal = false;
+    public $showFilters = false;
 
     // Search
     public $search = '';
+
+    // Filters with URL persistence
+    #[Url]
+    public $selectedCategories = [];
+    
+    #[Url]
+    public $selectedAnimals = [];
+    
+    #[Url]
+    public $inStockOnly = false;
+    
+    #[Url]
+    public $minPrice = 0;
+    
+    #[Url]
+    public $maxPrice = null;
 
     // Form fields - Product
     public $productId;
@@ -263,9 +281,34 @@ class ManageProducts extends Component
         ]);
     }
 
+    public function toggleFilters()
+    {
+        $this->showFilters = !$this->showFilters;
+    }
+
+    public function closeFilters()
+    {
+        $this->showFilters = false;
+    }
+
+    // Listen for filter events from ProductFilter component
+    protected $listeners = ['filtersApplied' => 'applyFilters', 'closeFilters' => 'closeFilters'];
+
+    public function applyFilters($filters)
+    {
+        $this->selectedCategories = $filters['categories'] ?? [];
+        $this->selectedAnimals = $filters['animals'] ?? [];
+        $this->inStockOnly = $filters['inStockOnly'] ?? false;
+        $this->minPrice = $filters['minPrice'] ?? 0;
+        $this->maxPrice = $filters['maxPrice'] ?? null;
+        
+        $this->showFilters = false;
+        $this->resetPage();
+    }
+
     public function render()
     {
-        // Get all specifications with their products, with search
+        // Get all specifications with their products, with search and filters
         $specifications = Specification::with(['product.animal', 'product.category'])
             ->when($this->search, function($query) {
                 $query->whereHas('product', function($q) {
@@ -275,6 +318,29 @@ class ManageProducts extends Component
                       });
                 })
                 ->orWhere('name', 'like', '%' . $this->search . '%');
+            })
+            // Apply category filter
+            ->when(!empty($this->selectedCategories), function($query) {
+                $query->whereHas('product', function($q) {
+                    $q->whereIn('category_id', $this->selectedCategories);
+                });
+            })
+            // Apply animal filter
+            ->when(!empty($this->selectedAnimals), function($query) {
+                $query->whereHas('product', function($q) {
+                    $q->whereIn('animal_id', $this->selectedAnimals);
+                });
+            })
+            // Apply stock filter
+            ->when($this->inStockOnly, function($query) {
+                $query->where('stock', '>', 0);
+            })
+            // Apply price range filter
+            ->when($this->minPrice > 0, function($query) {
+                $query->where('price', '>=', $this->minPrice);
+            })
+            ->when($this->maxPrice !== null && $this->maxPrice > 0, function($query) {
+                $query->where('price', '<=', $this->maxPrice);
             })
             ->orderBy('id', 'desc')
             ->paginate(10);

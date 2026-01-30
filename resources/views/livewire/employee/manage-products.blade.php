@@ -20,7 +20,7 @@
             {{-- Action Buttons --}}
             <div class="flex items-center gap-3">
                 {{-- Filter Button (Desktop with text) --}}
-                <button type="button" class="hidden md:flex items-center gap-2 px-4 h-[44px] border-2 border-black bg-white hover:bg-gray-50 transition-colors">
+                <button wire:click="toggleFilters" type="button" class="hidden md:flex items-center gap-2 px-4 h-[44px] border-2 border-black bg-white hover:bg-gray-50 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5">
                         <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z"/>
                     </svg>
@@ -28,7 +28,7 @@
                 </button>
 
                 {{-- Filter Icon Only (Mobile) --}}
-                <button type="button" class="md:hidden w-[44px] h-[44px] border-2 border-black bg-white flex items-center justify-center hover:bg-gray-50 transition-colors">
+                <button wire:click="toggleFilters" type="button" class="md:hidden w-[44px] h-[44px] border-2 border-black bg-white flex items-center justify-center hover:bg-gray-50 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5">
                         <path d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z"/>
                     </svg>
@@ -177,6 +177,20 @@
                 @include('livewire.employee.partials.product-form', ['isEdit' => true])
             </div>
         </div>
+    @endif
+
+    {{-- Filter Modal --}}
+    @if ($showFilters)
+        @livewire('components.product-filter', [
+            'categories' => $categories,
+            'animals' => $animals,
+            'selectedCategories' => $selectedCategories,
+            'selectedAnimals' => $selectedAnimals,
+            'inStockOnly' => $inStockOnly,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
+            'show' => $showFilters
+        ])
     @endif
 
     @script
