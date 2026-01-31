@@ -1,43 +1,43 @@
 <?php
+// app\Livewire\Products\ProductDetail.php
 
 namespace App\Livewire\Products;
 
 use App\Models\Product;
-use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class ProductDetail extends Component
 {
     public Product $product;
     public $selectedSpecId;
     public $quantity = 1;
-    
-    // UI State for Accordion
-    public $openSection = 'details'; // 'details', 'benefits', 'nutrition', or null
+
+    public $openSection = 'details';
 
     public function mount(Product $product)
     {
         $this->product = $product->load('specifications', 'category');
-        
-        // Default to first spec sorted by price
+
         $firstSpec = $this->product->specifications->sortBy('price')->first();
         $this->selectedSpecId = $firstSpec ? $firstSpec->id : null;
     }
 
-    public function updatedSelectedSpecId()
+    /**
+     * When favorites change anywhere (e.g., removed from CartDrawer),
+     * re-render so the heart updates in real time.
+     */
+    #[On('favoriteUpdated')]
+    public function refreshFavoriteState()
     {
-        // Reset quantity or validation if needed
+        // No-op: Livewire will re-render the component.
     }
 
     public function toggleSection($section)
     {
-        if ($this->openSection === $section) {
-            $this->openSection = null;
-        } else {
-            $this->openSection = $section;
-        }
+        $this->openSection = ($this->openSection === $section) ? null : $section;
     }
 
     public function incrementQuantity()
@@ -59,7 +59,6 @@ class ProductDetail extends Component
         }
 
         if (!$this->selectedSpecId) {
-            // Should add error message to UI
             return;
         }
 
@@ -82,7 +81,6 @@ class ProductDetail extends Component
         }
 
         $this->dispatch('cartUpdated');
-        // Optional: notification
     }
 
     public function toggleFavorite()
@@ -92,22 +90,21 @@ class ProductDetail extends Component
         }
 
         $user = Auth::user();
-        // Since we are on detail page, and user picked a spec...
-        // But favorites are usually just product-level in this simplified migration unless user wants spec-specific favorites list.
-        // Legacy code: stored spec name.
-        // Let's store unique per product (toggle).
-        
-        $fav = $user->favorites()->where('product_id', $this->product->id)->first();
+
+        $fav = $user->favorites()
+            ->where('product_id', $this->product->id)
+            ->first();
 
         if ($fav) {
             $fav->delete();
         } else {
             $user->favorites()->create([
                 'product_id' => $this->product->id,
-                'specification_id' => $this->selectedSpecId, // Store specific spec? Why not.
+                'specification_id' => $this->selectedSpecId,
             ]);
         }
 
+        // Updates CartDrawer favorites + ProductCard/ProductDetail hearts
         $this->dispatch('favoriteUpdated');
     }
 
@@ -119,10 +116,14 @@ class ProductDetail extends Component
     public function getIsFavoriteProperty()
     {
         if (!Auth::check()) return false;
-        return Auth::user()->favorites()->where('product_id', $this->product->id)->exists();
+
+        return Auth::user()
+            ->favorites()
+            ->where('product_id', $this->product->id)
+            ->exists();
     }
 
-    #[Layout('layouts.app')] 
+    #[Layout('layouts.app')]
     public function render()
     {
         return view('livewire.products.product-detail');

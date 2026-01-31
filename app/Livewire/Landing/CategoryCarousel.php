@@ -6,54 +6,75 @@ use Livewire\Component;
 
 class CategoryCarousel extends Component
 {
-    public int $current = 0;
-    public bool $isMobile = false; // Track mobile state
+    public int $currentMobile = 0;
+    public int $currentDesktop = 0;
 
     public array $cards = [
-        ['name' => 'Sustainable',  'img' => 'assets/images/trees.png'],
-        ['name' => 'Food',         'img' => 'assets/images/cart.png'],
-        ['name' => 'Accessories',  'img' => 'assets/images/clothes.png'],
-        ['name' => 'Grooming',     'img' => 'assets/images/fan.png'],
-        ['name' => 'Toys',         'img' => 'assets/images/tuk.png'],
+        ['name' => 'Sustainable', 'slug' => 'sustainable', 'img' => 'assets/images/trees.png'],
+        ['name' => 'Food',        'slug' => 'food',        'img' => 'assets/images/cart.png'],
+        ['name' => 'Accessories', 'slug' => 'accessories', 'img' => 'assets/images/clothes.png'],
+        ['name' => 'Grooming',    'slug' => 'grooming',    'img' => 'assets/images/fan.png'],
+        ['name' => 'Toys',        'slug' => 'toys',        'img' => 'assets/images/tuk.png'],
     ];
 
-    public function mount()
+    // --- Mobile: 1 per page ---
+    public function totalPagesMobile(): int
     {
-        // Default to mobile for server-side rendering
-        // Will be updated by Alpine.js on client side
-        $this->isMobile = true;
+        return (int) ceil(count($this->cards) / 1);
     }
 
-    public function getPerPageProperty(): int
+    public function visibleCardsMobile(): array
     {
-        // Show 1 item on mobile, 3 on desktop
-        return $this->isMobile ? 1 : 3;
+        $start = $this->currentMobile * 1;
+        return array_slice($this->cards, $start, 1);
     }
 
-    public function totalPages(): int
+    public function nextMobile(): void
     {
-        return (int) ceil(count($this->cards) / $this->perPage);
+        $this->currentMobile = ($this->currentMobile + 1) % $this->totalPagesMobile();
     }
 
-    public function next(): void
+    public function prevMobile(): void
     {
-        $this->current = ($this->current + 1) % $this->totalPages();
+        $this->currentMobile = ($this->currentMobile - 1 + $this->totalPagesMobile()) % $this->totalPagesMobile();
     }
 
-    public function prev(): void
+    public function goToMobile(int $index): void
     {
-        $this->current = ($this->current - 1 + $this->totalPages()) % $this->totalPages();
+        $this->currentMobile = $index;
     }
 
-    public function goTo(int $index): void
+    // --- Desktop: 3 per page ---
+    public function totalPagesDesktop(): int
     {
-        $this->current = $index;
+        return (int) ceil(count($this->cards) / 3);
     }
 
-    public function visibleCards(): array
+    public function visibleCardsDesktop(): array
     {
-        $start = $this->current * $this->perPage;
-        return array_slice($this->cards, $start, $this->perPage);
+        $start = $this->currentDesktop * 3;
+        return array_slice($this->cards, $start, 3);
+    }
+
+    public function nextDesktop(): void
+    {
+        $this->currentDesktop = ($this->currentDesktop + 1) % $this->totalPagesDesktop();
+    }
+
+    public function prevDesktop(): void
+    {
+        $this->currentDesktop = ($this->currentDesktop - 1 + $this->totalPagesDesktop()) % $this->totalPagesDesktop();
+    }
+
+    public function goToDesktop(int $index): void
+    {
+        $this->currentDesktop = $index;
+    }
+
+    // --- Redirect to products page filtered by category ---
+    public function goToCategory(string $slug)
+    {
+        return redirect()->route('products.index', ['category' => $slug]);
     }
 
     public function render()
