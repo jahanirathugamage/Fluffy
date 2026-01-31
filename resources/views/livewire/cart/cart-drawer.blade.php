@@ -1,4 +1,5 @@
 <div class="font-['Montserrat']">
+    <!-- resources/views/livewire/cart/cart-drawer.blade.php -->
     {{-- Cart Overlay --}}
     <div
         class="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity {{ $isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none' }}"
@@ -7,7 +8,7 @@
 
     {{-- Cart Sidebar --}}
     <div
-        class="fixed top-0 right-0 w-80 md:w-[520px] h-full bg-white transition-transform duration-300 z-50 shadow-lg flex flex-col font-[Montserrat] overflow-x-hidden
+        class="fixed top-0 right-0 w-[380px] md:w-[520px] h-full bg-white transition-transform duration-300 z-50 shadow-lg flex flex-col font-[Montserrat] overflow-x-hidden
         {{ $isOpen ? 'translate-x-0' : 'translate-x-full' }}"
     >
         <div class="px-6 md:px-8 py-6 flex flex-col h-full">
@@ -136,12 +137,16 @@
                     Taxes, Discounts and Shipping calculated at checkout
                 </p>
 
-                <button class="w-full bg-[#69A985] text-black font-bold py-3 border-2 border-black hover:bg-black hover:text-white transition flex items-center justify-center gap-3">
+                <!-- ✅ ONLY CHANGE: make checkout navigate -->
+                <a
+                    href="{{ route('checkout.show') }}"
+                    class="w-full bg-[#69A985] text-black font-bold py-3 border-2 border-black hover:bg-black hover:text-white transition flex items-center justify-center gap-3"
+                >
                     CHECKOUT
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-5 h-5 fill-current">
                         <path d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z"/>
                     </svg>
-                </button>
+                </a>
             </div>
         </div>
     </div>

@@ -1,4 +1,5 @@
 <x-app-layout>
+    <!-- resources\views\landing.blade.php -->
     <div class="font-['Montserrat']">
 
 

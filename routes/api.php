@@ -55,3 +55,14 @@ Route::middleware('auth:sanctum')->group(function () {
         // Route::delete('/products/{id}', ...);
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Payment Routes (Web Session Authentication)
+|--------------------------------------------------------------------------
+| These routes use regular web session auth, not API tokens
+*/
+Route::middleware(['web', 'auth'])->prefix('payment')->group(function () {
+    Route::post('/create-intent', [\App\Http\Controllers\Api\PaymentController::class, 'createPaymentIntent']);
+    Route::post('/confirm', [\App\Http\Controllers\Api\PaymentController::class, 'confirmPayment']);
+});

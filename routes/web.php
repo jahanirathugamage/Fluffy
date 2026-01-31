@@ -6,6 +6,7 @@ use App\Livewire\Products\Index as ProductsIndex;
 use App\Livewire\Employee\ManageProducts;
 
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/', function () {
     if (!auth()->check()) {
@@ -20,9 +21,15 @@ Route::get('/', function () {
     return redirect()->route('landing');
 })->name('home');
 
-// Public product browsing
-Route::get('/products', ProductsIndex::class)->name('products.index');
-Route::get('/products/{product}', \App\Livewire\Products\ProductDetail::class)->name('products.show');
+// Customer-only product browsing and checkout
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/products', ProductsIndex::class)->name('products.index');
+    Route::get('/products/{product}', \App\Livewire\Products\ProductDetail::class)->name('products.show');
+    
+    // Checkout routes
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+});
 
 // Employee product management
 Route::middleware(['auth', 'verified', 'permission:view-dashboard'])->group(function () {

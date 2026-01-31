@@ -41,4 +41,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'stripe' => [
+        'key' => env('STRIPE_KEY'), // Publishable key (test mode: pk_test_...)
+        'secret' => env('STRIPE_SECRET'), // Secret key (test mode: sk_test_...)
+    ],
+
 ];
