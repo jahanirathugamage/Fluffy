@@ -1,5 +1,5 @@
 <?php
-
+// app\Livewire\Fluffy\Navbar.php
 namespace App\Livewire\Fluffy;
 
 use Livewire\Component;
@@ -11,6 +11,8 @@ class Navbar extends Component
     public $searchExpanded = false;
     public $searchQuery = '';
     public $cartCount = 0;
+
+    public $hamburgerOpen = false;
 
     public function mount()
     {
@@ -28,10 +30,16 @@ class Navbar extends Component
         }
     }
 
+    #[On('hamburgerMenuStateChanged')]
+    public function syncHamburgerState($isOpen)
+    {
+        $this->hamburgerOpen = (bool) $isOpen;
+    }
+
     public function toggleSearch()
     {
         $this->searchExpanded = !$this->searchExpanded;
-        
+
         // Clear search when closing
         if (!$this->searchExpanded) {
             $this->searchQuery = '';

@@ -1,5 +1,5 @@
 <?php
-
+// database\migrations\2026_01_28_075351_add_google_id_to_users_table.php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

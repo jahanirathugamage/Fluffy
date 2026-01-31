@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/Auth/GoogleController.php
 
 namespace App\Http\Controllers\Auth;
 
@@ -7,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use Spatie\Permission\Models\Permission;
 
 class GoogleController extends Controller
 {
@@ -24,19 +26,27 @@ class GoogleController extends Controller
             [
                 'name' => $googleUser->getName() ?: $googleUser->getNickname() ?: 'Google User',
                 'google_id' => $googleUser->getId(),
-                // Set a random password so DB constraint is satisfied (user won’t use it)
                 'password' => bcrypt(Str::random(32)),
             ]
         );
 
+        /**
+         * Ensure role/permission exists for Google-created users
+         * (prevents 403 on routes protected by `permission:buy-products`)
+         */
+        if ($user->roles()->count() === 0) {
+            $user->assignRole('customer');
+        }
+
+        // If your system protects customer pages with `permission:buy-products`,
+        // make sure the user has it (only if the permission exists).
+        if (Permission::where('name', 'buy-products')->exists() && !$user->can('buy-products')) {
+            $user->givePermissionTo('buy-products');
+        }
+
         Auth::login($user, true);
 
-        /**
-         * ✅ If request expects JSON (API style):
-         * Return a Sanctum token so you can test protected API endpoints.
-         */
         if (request()->wantsJson()) {
-            // Optional: delete old tokens so user only has one active token
             $user->tokens()->delete();
 
             $token = $user->createToken('google-oauth-token')->plainTextToken;
@@ -48,10 +58,11 @@ class GoogleController extends Controller
             ]);
         }
 
-        /**
-         * ✅ Normal web flow:
-         * Redirect to dashboard
-         */
-        return redirect()->route('dashboard');
+        // Redirect based on role
+        if ($user->hasRole('employee') || $user->can('view-dashboard')) {
+            return redirect()->route('employee.manage-products');
+        }
+
+        return redirect()->route('landing');
     }
 }

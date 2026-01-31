@@ -1,5 +1,5 @@
 <?php
-
+// app\Livewire\Fluffy\HamburgerMenu.php
 namespace App\Livewire\Fluffy;
 
 use Livewire\Component;
@@ -11,13 +11,19 @@ class HamburgerMenu extends Component
     public $currentLevel = 'main'; // main, otherPets, cats, dogs, rabbit, hamster
     public $animalContext = null;
 
-    protected $listeners = ['openHamburgerMenu' => 'open'];
+    protected $listeners = [
+        'openHamburgerMenu' => 'open',
+        'closeHamburgerMenu' => 'close',
+    ];
 
     public function open()
     {
         $this->isOpen = true;
         $this->currentLevel = 'main';
         $this->animalContext = null;
+
+        // Inform navbar so it can show the "X" icon on mobile
+        $this->dispatch('hamburgerMenuStateChanged', isOpen: true);
     }
 
     public function close()
@@ -25,6 +31,9 @@ class HamburgerMenu extends Component
         $this->isOpen = false;
         $this->currentLevel = 'main';
         $this->animalContext = null;
+
+        // Inform navbar so it can revert back to hamburger icon
+        $this->dispatch('hamburgerMenuStateChanged', isOpen: false);
     }
 
     public function navigateTo($level, $animal = null)
@@ -49,9 +58,11 @@ class HamburgerMenu extends Component
 
     public function logout()
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         session()->invalidate();
         session()->regenerateToken();
+
+        $this->dispatch('hamburgerMenuStateChanged', isOpen: false);
 
         return redirect()->route('login');
     }

@@ -9,8 +9,9 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -21,17 +22,21 @@
         <x-banner />
 
         <div class="bg-white">
-            {{-- Customer Navigation --}}
-            @livewire('fluffy.navbar')
-            @livewire('fluffy.hamburger-menu')
-            @livewire('cart.cart-drawer')
-
-            {{-- Employee Navigation (only for employees) --}}
             @auth
-                @can('view-dashboard')
+                @if(auth()->user()->hasRole('employee'))
+                    {{-- Employee Navigation --}}
                     @livewire('employee.navbar')
-                @endcan
+                @else
+                    {{-- Customer Navigation --}}
+                    @livewire('fluffy.navbar')
+                    @livewire('fluffy.hamburger-menu')
+                    @livewire('cart.cart-drawer')
+                @endif
             @endauth
+
+            @guest
+                {{-- Guest users (no nav here; your guest layout handles auth pages) --}}
+            @endguest
 
             <!-- Page Heading -->
             @if (isset($header))

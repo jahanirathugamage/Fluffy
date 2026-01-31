@@ -1,4 +1,5 @@
 <?php
+// app\Providers\FortifyServiceProvider.php
 
 namespace App\Providers;
 
@@ -35,25 +36,36 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
 
-        // Custom post-login redirect based on user role
+        /**
+         * ✅ Custom post-login redirect:
+         * - Employees (role OR permission) -> manage-products
+         * - Customers -> landing
+         *
+         * NOTE: Your app uses Spatie roles/permissions, so do NOT use `$user->role`.
+         */
         Fortify::redirects('login', function () {
             $user = auth()->user();
-            
-            if ($user && strtolower($user->role) === 'customer') {
-                return route('landing');
+
+            // Employee logic: role OR capability
+            if ($user && ($user->hasRole('employee') || $user->can('view-dashboard'))) {
+                return route('employee.manage-products');
             }
-            
-            // Default for employees
-            return route('dashboard');
+
+            // Default: customer landing
+            return route('landing');
         });
 
-        // Custom post-logout redirect to login page
+        /**
+         * ✅ Custom post-logout redirect to login page
+         */
         Fortify::redirects('logout', function () {
             return route('login');
         });
 
         RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+            $throttleKey = Str::transliterate(
+                Str::lower($request->input(Fortify::username())) . '|' . $request->ip()
+            );
 
             return Limit::perMinute(5)->by($throttleKey);
         });
