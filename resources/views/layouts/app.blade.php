@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- resources\views\layouts\app.blade.php -->
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -23,9 +24,16 @@
 
         <div class="bg-white">
             @auth
-                @if(auth()->user()->hasRole('employee'))
+                @php
+                    // Employees are authorized in routes via permission:view-dashboard.
+                    // Some employee accounts may not have the 'employee' role, so rely on permission too.
+                    $isEmployee = auth()->user()->hasRole('employee') || auth()->user()->can('view-dashboard');
+                @endphp
+
+                @if($isEmployee)
                     {{-- Employee Navigation --}}
                     @livewire('employee.navbar')
+                    @livewire('employee.hamburger-menu')
                 @else
                     {{-- Customer Navigation --}}
                     @livewire('fluffy.navbar')

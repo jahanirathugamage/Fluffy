@@ -10,12 +10,12 @@ class Navbar extends Component
 
     public function toggleSidebar()
     {
-        $this->showSidebar = !$this->showSidebar;
+        $this->dispatch('openHamburgerMenu');
     }
 
     public function closeSidebar()
     {
-        $this->showSidebar = false;
+        $this->dispatch('closeHamburgerMenu');
     }
 
     public function render()

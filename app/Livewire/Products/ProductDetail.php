@@ -19,6 +19,11 @@ class ProductDetail extends Component
 
     public function mount(Product $product)
     {
+        // If employee, redirect to dashboard
+        if (auth()->check() && (auth()->user()->hasRole('employee') || auth()->user()->can('view-dashboard'))) {
+            return redirect()->route('employee.manage-products');
+        }
+
         $this->product = $product->load('specifications', 'category');
 
         $firstSpec = $this->product->specifications->sortBy('price')->first();

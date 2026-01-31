@@ -1,5 +1,5 @@
 <?php
-
+// app\Livewire\Admin\Products\Index.php
 namespace App\Livewire\Admin\Products;
 
 use App\Models\Product;

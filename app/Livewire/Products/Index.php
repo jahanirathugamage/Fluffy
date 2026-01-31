@@ -13,6 +13,8 @@ use App\Models\Category;
 class Index extends Component
 {
     use WithPagination;
+    
+
 
     protected $paginationTheme = 'tailwind';
 
@@ -41,6 +43,11 @@ class Index extends Component
 
     public function mount()
     {
+        // If employee, redirect to dashboard
+        if (auth()->check() && (auth()->user()->hasRole('employee') || auth()->user()->can('view-dashboard'))) {
+            return redirect()->route('employee.manage-products');
+        }
+
         $animalParam = request()->query('animal');      // cat, dog, rabbit, hamster
         $categoryParam = request()->query('category');  // accessories, grooming, sustainable, etc.
 

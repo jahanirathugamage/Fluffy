@@ -1,4 +1,5 @@
 <div>
+    <!-- resources\views\livewire\employee\navbar.blade.php -->
 <nav class="flex items-center justify-between bg-[#4FB5D0] px-[58px] py-3">
     {{-- Left: Menu Icon and Logo --}}
     <div class="flex items-center gap-6">

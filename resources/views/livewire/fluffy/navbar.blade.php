@@ -1,4 +1,5 @@
 <div class="bg-[#4FB5D0] text-white relative z-50">
+    <!-- resources\views\livewire\fluffy\navbar.blade.php -->
     {{-- Desktop Navbar --}}
     <div class="hidden md:flex items-center justify-between px-[58px] py-3">
         {{-- Left Section: Hamburger & Logo --}}

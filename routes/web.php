@@ -1,5 +1,5 @@
 <?php
-
+// routes\web.php
 use Illuminate\Support\Facades\Route;
 
 use App\Livewire\Products\Index as ProductsIndex;
@@ -27,6 +27,7 @@ Route::get('/products/{product}', \App\Livewire\Products\ProductDetail::class)->
 // Employee product management
 Route::middleware(['auth', 'verified', 'permission:view-dashboard'])->group(function () {
     Route::get('/employee/manage-products', ManageProducts::class)->name('employee.manage-products');
+    Route::get('/employee/orders', \App\Livewire\Employee\Orders::class)->name('admin.orders.index');
 });
 
 // Jetstream dashboard route (make it role-smart)
