@@ -1,5 +1,5 @@
 <?php
-
+// app\Http\Controllers\CheckoutController.php
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;

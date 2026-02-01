@@ -1,4 +1,5 @@
 <div class="max-w-7xl mx-auto py-10 px-4">
+    <!-- resources\views\livewire\employee\orders.blade.php -->
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-semibold">Manage Orders</h1>
     </div>
