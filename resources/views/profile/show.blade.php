@@ -36,6 +36,36 @@
             @if (Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures())
                 <x-section-border />
 
+                @if(auth()->user()->hasRole('employee'))
+                    <div class="mt-10 sm:mt-0">
+                        <x-action-section>
+                            <x-slot name="title">
+                                {{ __('Create Employee Account') }}
+                            </x-slot>
+
+                            <x-slot name="description">
+                                {{ __('Create a new employee account to manage the store.') }}
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <div class="max-w-xl text-sm text-gray-600">
+                                    {{ __('Use this section to create distinct accounts for your employees. This allows them to manage products and orders securely.') }}
+                                </div>
+
+                                <div class="mt-5">
+                                    <a href="{{ route('employee.create-account') }}">
+                                        <x-button>
+                                            {{ __('Create Employee Account') }}
+                                        </x-button>
+                                    </a>
+                                </div>
+                            </x-slot>
+                        </x-action-section>
+                    </div>
+
+                    <x-section-border />
+                @endif
+
                 <div class="mt-10 sm:mt-0">
                     @livewire('profile.delete-user-form')
                 </div>

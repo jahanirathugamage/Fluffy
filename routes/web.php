@@ -35,6 +35,7 @@ Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee
     Route::get('/manage-products', \App\Livewire\Employee\ManageProducts::class)->name('manage-products');
     Route::get('/orders', \App\Livewire\Employee\ManageOrders::class)->name('orders');
     Route::get('/orders/{order}', \App\Livewire\Employee\ManageOrderDetails::class)->name('order-details');
+    Route::get('/create-account', \App\Livewire\Employee\CreateAccount::class)->name('create-account');
 });
 
 // Customer Routes
