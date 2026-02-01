@@ -24,7 +24,7 @@ Route::middleware([
 ])->group(function () {
     Route::get('/dashboard', function () {
         if (auth()->user()->hasRole('employee')) {
-            return redirect()->route('employee.manage-products');
+            return redirect()->route('employee.dashboard');
         }
         return redirect()->route('landing');
     })->name('dashboard');
@@ -32,6 +32,7 @@ Route::middleware([
 
 // Employee Routes
 Route::middleware(['auth', 'role:employee'])->prefix('employee')->name('employee.')->group(function () {
+    Route::get('/dashboard', \App\Livewire\Employee\Dashboard::class)->name('dashboard');
     Route::get('/manage-products', \App\Livewire\Employee\ManageProducts::class)->name('manage-products');
     Route::get('/orders', \App\Livewire\Employee\ManageOrders::class)->name('orders');
     Route::get('/orders/{order}', \App\Livewire\Employee\ManageOrderDetails::class)->name('order-details');
