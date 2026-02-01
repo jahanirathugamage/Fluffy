@@ -241,8 +241,8 @@ class ManageProducts extends Component
         // Create safe filename (no special characters)
         $safeFileName = time() . '_' . uniqid() . '.' . $extension;
         
-        // Define the target directory path using forward slashes
-        $targetDir = 'assets/images/' . $animalName;
+        // Define the target directory path using forward slashes (lowercase for consistency)
+        $targetDir = 'assets/images/' . strtolower($animalName);
         
         // Create the full directory in public folder if it doesn't exist
         $publicPath = public_path($targetDir);

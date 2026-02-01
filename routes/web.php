@@ -20,7 +20,7 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-    'role.redirect',
+
 ])->group(function () {
     Route::get('/dashboard', function () {
         if (auth()->user()->hasRole('employee')) {
