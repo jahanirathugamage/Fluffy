@@ -32,7 +32,7 @@
 
                 {{-- Cart Items --}}
                 <div class="space-y-6">
-                    @forelse($this->cartItems as $item)
+                    @forelse($this->cartItems['available'] as $item)
                         <div class="flex gap-4">
                             {{-- Image --}}
                             <div class="w-16 h-16 flex-shrink-0">
@@ -73,11 +73,68 @@
                             </div>
                         </div>
                     @empty
-                        <div class="text-center py-10 text-gray-500">
-                            <p>Your cart is empty.</p>
-                        </div>
+                        @if($this->cartItems['unavailable']->isEmpty())
+                            <div class="text-center py-10 text-gray-500">
+                                <p>Your cart is empty.</p>
+                            </div>
+                        @else
+                            <div class="text-center py-4 text-gray-500">
+                                <p>No available items.</p>
+                            </div>
+                        @endif
                     @endforelse
                 </div>
+
+                {{-- Unavailable Items --}}
+                @if($this->cartItems['unavailable']->isNotEmpty())
+                    <div class="mt-8 border-t border-black pt-6">
+                        <h3 class="font-bold text-red-600 mb-4 uppercase tracking-widest flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            Out of Stock / Unavailable
+                        </h3>
+                        <p class="text-xs text-gray-600 mb-4">
+                            The following items are no longer available in the requested quantity and cannot be purchased. 
+                            Please remove them or reduce the quantity if stock permits.
+                        </p>
+
+                        <div class="space-y-6 opacity-75">
+                            @foreach($this->cartItems['unavailable'] as $item)
+                                <div class="flex gap-4 grayscale">
+                                    {{-- Image --}}
+                                    <div class="w-16 h-16 flex-shrink-0">
+                                        <img src="{{ asset($item->product->image_path) }}" alt="{{ $item->product->name }}" class="w-full h-full object-contain">
+                                    </div>
+
+                                    {{-- Details --}}
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-start gap-3">
+                                            <div class="min-w-0">
+                                                <h3 class="font-medium text-sm leading-tight text-gray-900 truncate">
+                                                    {{ $item->product->name }}
+                                                </h3>
+                                                <p class="text-xs text-gray-500 mt-1">
+                                                    ({{ $item->specification->name }})
+                                                </p>
+                                                <p class="text-xs text-red-600 font-bold mt-1">
+                                                    Requested: {{ $item->quantity }} / Stock: {{ $item->specification->stock ?? 0 }}
+                                                </p>
+                                            </div>
+
+                                            {{-- Delete Icon Only --}}
+                                            <button wire:click="remove({{ $item->id }})" class="shrink-0 text-red-600 hover:text-red-800">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-5 h-5 fill-current">
+                                                    <path d="M135.2 17.7C140.8 7.6 151.3 0 163.2 0H284.8c11.9 0 22.4 7.6 28 17.7L328 32H432c8.8 0 16 7.2 16 16s-7.2 16-16 16H416l-25.6 364.3c-1.3 18.2-16.2 32.7-34.5 32.7H92.1c-18.3 0-33.2-14.5-34.5-32.7L32 64H16c-8.8 0-16-7.2-16-16s7.2-16 16-16H120l15.2-14.3zM171.2 192c-8.8 0-16 7.2-16 16v192c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm105.6 0c-8.8 0-16 7.2-16 16v192c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Favorites (MATCH MOCKUP) --}}
                 @if($this->favorites->isNotEmpty())

@@ -67,6 +67,14 @@ class ProductDetail extends Component
             return;
         }
 
+        $spec = $this->getCurrentSpecProperty();
+
+        // Stock Check 1: Is it completely OOS?
+        if (!$spec || $spec->stock <= 0) {
+            $this->addError('quantity', 'This item is out of stock.');
+            return;
+        }
+
         $user = Auth::user();
         $cart = $user->cart()->firstOrCreate([]);
 
@@ -74,6 +82,16 @@ class ProductDetail extends Component
             ->where('product_id', $this->product->id)
             ->where('specification_id', $this->selectedSpecId)
             ->first();
+
+        $currentCartQty = $existingItem ? $existingItem->quantity : 0;
+        $totalRequested = $currentCartQty + $this->quantity;
+
+        // Stock Check 2: Does total exceed stock?
+        if ($totalRequested > $spec->stock) {
+            $remaining = max(0, $spec->stock - $currentCartQty);
+            $this->addError('quantity', "Only {$remaining} more item(s) can be added (Stock: {$spec->stock}).");
+            return;
+        }
 
         if ($existingItem) {
             $existingItem->increment('quantity', $this->quantity);
@@ -86,6 +104,7 @@ class ProductDetail extends Component
         }
 
         $this->dispatch('cartUpdated');
+        // Optional: Dispatch success message or similar
     }
 
     public function toggleFavorite()

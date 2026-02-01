@@ -69,18 +69,36 @@ class CartDrawer extends Component
 
     public function getCartItemsProperty()
     {
-        if (!Auth::check()) return collect();
+        if (!Auth::check()) return ['available' => collect(), 'unavailable' => collect()];
 
         $cart = Auth::user()->cart;
-        return $cart ? $cart->items()->with('product', 'specification')->get() : collect();
+        if (!$cart) return ['available' => collect(), 'unavailable' => collect()];
+
+        $items = $cart->items()->with('product', 'specification')->get();
+
+        $available = $items->filter(function ($item) {
+            return $item->quantity <= ($item->specification->stock ?? 0);
+        });
+
+        $unavailable = $items->filter(function ($item) {
+            return $item->quantity > ($item->specification->stock ?? 0);
+        });
+
+        return [
+            'available' => $available->values(),
+            'unavailable' => $unavailable->values()
+        ];
     }
 
     public function getTotalProperty()
     {
         if (!Auth::check()) return 0;
-
-        $cart = Auth::user()->cart;
-        return $cart ? $cart->totalPrice() : 0;
+        
+        // Only sum the available items
+        return $this->cartItems['available']->sum(function ($item) {
+            // Re-calculate subtotal just to be safe or use model accessor
+            return $item->quantity * ($item->specification->price ?? 0);
+        });
     }
 
     public function getCartCountProperty()

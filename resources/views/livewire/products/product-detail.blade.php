@@ -1,12 +1,19 @@
 <div class="font-['Montserrat'] max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 gap-10">
 
     {{-- Left: Product Image --}}
-    <div class="flex flex-col items-center justify-center border-black border-4 bg-white p-4">
+    <div class="flex flex-col items-center justify-center border-black border-4 bg-white p-4 relative">
         <img
             src="{{ asset($product->image_path) }}"
             alt="{{ $product->name }}"
-            class="w-[200px] md:w-[300px] object-contain"
+            class="w-[200px] md:w-[300px] object-contain {{ ($this->currentSpec && $this->currentSpec->stock <= 0) ? 'opacity-50 grayscale' : '' }}"
         >
+        @if($this->currentSpec && $this->currentSpec->stock <= 0)
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="bg-black/80 text-white px-6 py-2 text-xl font-bold uppercase tracking-widest transform -rotate-12 border-2 border-white">
+                    Out of Stock
+                </div>
+            </div>
+        @endif
     </div>
 
     {{-- Right: Product Info --}}
@@ -81,10 +88,20 @@
             <button
                 type="button"
                 wire:click="addToCart"
-                class="w-full py-2 bg-[#4FB5D0] text-white font-bold border-2 border-black hover:bg-black transition-colors flex-1"
+                class="w-full py-2 font-bold border-2 border-black transition-colors flex-1
+                {{ ($this->currentSpec && $this->currentSpec->stock > 0)
+                    ? 'bg-[#4FB5D0] text-white hover:bg-black'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed' }}"
+                {{ (!$this->currentSpec || $this->currentSpec->stock <= 0) ? 'disabled' : '' }}
             >
-                Add to Cart
+                {{ ($this->currentSpec && $this->currentSpec->stock > 0) ? 'Add to Cart' : 'Out of Stock' }}
             </button>
+            
+            @error('quantity') 
+                <div class="absolute top-full left-0 mt-2 text-red-600 font-bold text-sm">
+                    {{ $message }}
+                </div>
+            @enderror
 
             {{-- Favorites --}}
             <button type="button" wire:click="toggleFavorite" class="flex items-center justify-center group">

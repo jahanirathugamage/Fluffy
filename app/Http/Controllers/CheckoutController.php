@@ -104,13 +104,18 @@ class CheckoutController extends Controller
             'phone' => $validated['phone'],
         ]);
 
-        // Create Order Items
+        // Create Order Items and Decrement Stock
         foreach ($cart->items as $item) {
             $order->items()->create([
                 'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
                 'price' => $item->specification->price ?? 0,
             ]);
+
+            // Decrement Stock
+            if ($item->specification) {
+                $item->specification->decrement('stock', $item->quantity);
+            }
         }
 
         // Clear Cart
