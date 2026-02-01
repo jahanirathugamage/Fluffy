@@ -336,7 +336,7 @@
 
                 // Success! Redirect to landing page
                 console.log('Order created successfully! Redirecting...');
-                window.location.href = '{{ route('landing') }}?payment=success';
+                window.location.href = '{{ route('my-orders.index') }}';
             } else {
                 throw new Error('Payment status: ' + paymentIntent.status);
             }

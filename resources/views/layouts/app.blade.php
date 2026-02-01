@@ -63,6 +63,8 @@
             @auth
                 @if(!auth()->user()->hasRole('employee') && !auth()->user()->can('view-dashboard'))
                     @livewire('fluffy.footer')
+                @else
+                    @livewire('employee.footer')
                 @endif
             @endauth
         </div>

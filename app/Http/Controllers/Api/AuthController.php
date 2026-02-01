@@ -10,12 +10,9 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(\App\Http\Requests\Api\Auth\LoginRequest $request)
     {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required'
-        ]);
+        $request->validated();
 
         $user = User::where('email', $request->email)->first();
 
@@ -25,9 +22,28 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Define scopes based on role
+        $abilities = ['basic']; // Default scope
+        
+        if ($user->hasRole('customer')) {
+            $abilities = array_merge($abilities, ['order:create', 'order:view']);
+        }
+        
+        if ($user->hasRole('employee') || $user->hasRole('admin')) {
+            $abilities = array_merge($abilities, ['products:manage', 'order:view', 'order:update']);
+        }
+
+        // Token creation with device name and scopes
+        $deviceName = $request->device_name ?? 'Unknown Device';
+        $token = $user->createToken($deviceName, $abilities)->plainTextToken;
+
         return response()->json([
-            'token' => $user->createToken('api-token')->plainTextToken,
-            'user'  => $user
+            'status' => 'success',
+            'data' => [
+                'token' => $token,
+                'user'  => $user,
+                'scopes' => $abilities
+            ]
         ]);
     }
 
