@@ -33,6 +33,16 @@
                             class="w-72 px-4 py-2 border-2 border-black text-gray-800 focus:outline-none"
                             @if($searchExpanded) autofocus @endif
                         >
+
+                        @if(count($searchResults) > 0)
+                            <div class="absolute top-full left-0 w-72 bg-white border-2 border-t-0 border-black shadow-lg z-50">
+                                @foreach($searchResults as $result)
+                                    <a href="{{ route('products.show', $result) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        {{ $result->name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
                     <button
@@ -139,13 +149,25 @@
             <div class="absolute top-0 left-0 right-0 bg-white shadow-lg border-b-2 border-black animate-slide-down">
                 <div class="px-4 py-4">
                     <form wire:submit.prevent="search" class="flex items-center gap-2">
-                        <input
-                            type="text"
-                            wire:model.live.debounce.300ms="searchQuery"
-                            placeholder="Search"
-                            class="flex-1 px-4 py-2 border-2 border-black text-gray-800 focus:outline-none"
-                            autofocus
-                        >
+                        <div class="flex-1 relative">
+                             <input
+                                type="text"
+                                wire:model.live.debounce.300ms="searchQuery"
+                                placeholder="Search"
+                                class="w-full px-4 py-2 border-2 border-black text-gray-800 focus:outline-none"
+                                autofocus
+                            >
+                            @if(count($searchResults) > 0)
+                                <div class="absolute top-full left-0 w-full bg-white border-2 border-t-0 border-black shadow-lg z-50">
+                                    @foreach($searchResults as $result)
+                                        <a href="{{ route('products.show', $result) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            {{ $result->name }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                        
                         <button type="submit" class="bg-black text-white px-4 py-2 border-2 border-black hover:bg-gray-800 transition-colors" aria-label="Search">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-5 h-5 fill-white">
                                 <path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/>

@@ -6,10 +6,13 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Auth;
 
+use App\Models\Product;
+
 class Navbar extends Component
 {
     public $searchExpanded = false;
     public $searchQuery = '';
+    public $searchResults = [];
     public $cartCount = 0;
 
     public $hamburgerOpen = false;
@@ -36,6 +39,18 @@ class Navbar extends Component
         $this->hamburgerOpen = (bool) $isOpen;
     }
 
+    public function updatedSearchQuery()
+    {
+        if (strlen($this->searchQuery) < 2) {
+            $this->searchResults = [];
+            return;
+        }
+
+        $this->searchResults = Product::where('name', 'like', '%' . $this->searchQuery . '%')
+            ->take(5)
+            ->get();
+    }
+
     public function toggleSearch()
     {
         $this->searchExpanded = !$this->searchExpanded;
@@ -43,6 +58,7 @@ class Navbar extends Component
         // Clear search when closing
         if (!$this->searchExpanded) {
             $this->searchQuery = '';
+            $this->searchResults = [];
         }
     }
 
