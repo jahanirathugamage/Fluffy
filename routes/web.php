@@ -34,7 +34,12 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 // Employee product management
 Route::middleware(['auth', 'verified', 'permission:view-dashboard'])->group(function () {
     Route::get('/employee/manage-products', ManageProducts::class)->name('employee.manage-products');
-    Route::get('/employee/orders', \App\Livewire\Employee\Orders::class)->name('admin.orders.index');
+    
+    // Order Management
+    Route::middleware(['permission:manage-orders'])->group(function () {
+        Route::get('/employee/orders', \App\Livewire\Employee\ManageOrders::class)->name('employee.orders.index');
+        Route::get('/employee/orders/{order}', \App\Livewire\Employee\ManageOrderDetails::class)->name('employee.orders.show');
+    });
 });
 
 // Jetstream dashboard route (make it role-smart)
@@ -92,5 +97,7 @@ Route::middleware([
 
     Route::view('/profile', 'profile.show')->name('profile');
 
-    Route::view('/orders', 'orders.index')->name('orders.index');
+    // My Orders
+    Route::get('/my-orders', \App\Livewire\Customer\MyOrders::class)->name('my-orders.index');
+    Route::get('/my-orders/{order}', \App\Livewire\Customer\MyOrderDetails::class)->name('my-orders.show');
 });

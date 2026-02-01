@@ -59,6 +59,12 @@
             <main class="p-0 m-0">
                 {{ $slot }}
             </main>
+
+            @auth
+                @if(!auth()->user()->hasRole('employee') && !auth()->user()->can('view-dashboard'))
+                    @livewire('fluffy.footer')
+                @endif
+            @endauth
         </div>
 
         @stack('modals')

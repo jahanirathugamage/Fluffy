@@ -70,7 +70,7 @@ class CheckoutController extends Controller
 
         // Safety: ensure cart exists and has items
         $user = Auth::user();
-        $cart = $user->cart()->with('items')->first();
+        $cart = $user->cart()->with('items.specification')->first();
 
         if (!$cart || $cart->items->isEmpty()) {
             return redirect()
@@ -79,14 +79,47 @@ class CheckoutController extends Controller
                 ->withInput();
         }
 
-        // ✅ Legacy behavior: "success" clears cart.
-        // (No payment gateway yet — just like your legacy PHP simulation)
+        // Calculate Total
+        $subtotal = $cart->items->sum(function ($item) {
+             return $item->quantity * ($item->specification->price ?? 0);
+        });
+        $total = $subtotal + 300; // Shipping
+
+        // Delivery Date will be calculated when the order is shipped by the employee
+        // $deliveryDate = now()->addDay()->setTime(rand(8, 20), rand(0, 59));
+
+        // Create Order
+        $order = \App\Models\Order::create([
+            'user_id' => $user->id,
+            'stripe_payment_intent_id' => 'legacy_sim_' . uniqid(), // Simulation
+            'amount' => $total,
+            'payment_status' => 'completed',
+            'delivery_status' => 'processing',
+            // delivery_expected_at will be set when shipped
+            'fname' => $validated['fname'],
+            'lname' => $validated['lname'],
+            'address' => $validated['address'],
+            'city' => $validated['city'],
+            'country' => 'Sri Lanka', // Defaulting for now
+            'phone' => $validated['phone'],
+        ]);
+
+        // Create Order Items
+        foreach ($cart->items as $item) {
+            $order->items()->create([
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->specification->price ?? 0,
+            ]);
+        }
+
+        // Clear Cart
         $cart->items()->delete();
 
-        // Use Jetstream banner (works with your <x-banner /> in app layout)
-        session()->flash('flash.banner', 'Order Successful! Thank you for shopping with us!');
+        // Use Jetstream banner
+        session()->flash('flash.banner', 'Order Placed! Your order is now being processed.');
         session()->flash('flash.bannerStyle', 'success');
 
-        return redirect()->route('landing');
+        return redirect()->route('my-orders.index');
     }
 }

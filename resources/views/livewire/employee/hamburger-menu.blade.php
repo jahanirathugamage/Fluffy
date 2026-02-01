@@ -57,7 +57,7 @@
                         {{-- Manage Orders --}}
                         @can('manage-orders')
                             <li class="flex items-center justify-between group cursor-pointer" wire:click="close">
-                                <a href="{{ route('admin.orders.index') }}" class="block text-white font-[Montserrat] text-[20px] font-medium">
+                                <a href="{{ route('employee.orders.index') }}" class="block text-white font-[Montserrat] text-[20px] font-medium">
                                     Manage Orders
                                 </a>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-5 h-5 fill-white">
@@ -108,7 +108,7 @@
                         {{-- Manage Orders --}}
                         @can('manage-orders')
                             <li class="flex items-center justify-between group cursor-pointer" wire:click="close">
-                                <a href="{{ route('admin.orders.index') }}" class="block text-white font-[Montserrat] text-[20px] font-medium">
+                                <a href="{{ route('employee.orders.index') }}" class="block text-white font-[Montserrat] text-[20px] font-medium">
                                     Manage Orders
                                 </a>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-5 h-5 fill-white">

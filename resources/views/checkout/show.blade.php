@@ -24,13 +24,27 @@
             <!-- Shipping -->
             <h2 class="text-lg font-semibold mb-4">Shipping Address</h2>
             <div class="space-y-3 mb-6">
-                <select name="country" id="country" class="w-full border px-3 py-2 border-black" required>
+                <select name="country" id="country" class="w-full border px-3 py-3 border-black" required>
                     <option disabled {{ old('country') ? '' : 'selected' }}>Country</option>
                     <option value="Sri Lanka" selected>Sri Lanka</option>
                 </select>
 
-                <div class="flex space-x-3">
-                    <div class="w-1/2">
+                <div class="mb-3">
+                    @error('email') <p class="text-red-500 text-sm mb-1">{{ $message }}</p> @enderror
+                    <label for="email" class="sr-only">Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="Email"
+                        value="{{ old('email', auth()->user()->email) }}"
+                        class="w-full border px-3 py-3 border-black"
+                        required
+                    >
+                </div>
+
+                <div class="flex flex-col md:flex-row md:space-x-3 space-y-3 md:space-y-0">
+                    <div class="w-full md:w-1/2">
                         @error('fname') <p class="text-red-500 text-sm mb-1">{{ $message }}</p> @enderror
                         <input
                             type="text"
@@ -38,11 +52,11 @@
                             id="fname"
                             placeholder="First name"
                             value="{{ old('fname') }}"
-                            class="w-full border px-3 py-2 border-black"
+                            class="w-full border px-3 py-3 border-black"
                             required
                         >
                     </div>
-                    <div class="w-1/2">
+                    <div class="w-full md:w-1/2">
                         @error('lname') <p class="text-red-500 text-sm mb-1">{{ $message }}</p> @enderror
                         <input
                             type="text"
@@ -50,7 +64,7 @@
                             id="lname"
                             placeholder="Last name"
                             value="{{ old('lname') }}"
-                            class="w-full border px-3 py-2 border-black"
+                            class="w-full border px-3 py-3 border-black"
                             required
                         >
                     </div>
@@ -63,7 +77,7 @@
                     id="address"
                     placeholder="Address"
                     value="{{ old('address') }}"
-                    class="w-full border px-3 py-2 border-black"
+                    class="w-full border px-3 py-3 border-black"
                     required
                 >
 
@@ -73,11 +87,11 @@
                     id="apartment"
                     placeholder="Apartment, suite, etc. (optional)"
                     value="{{ old('apartment') }}"
-                    class="w-full border px-3 py-2 border-black"
+                    class="w-full border px-3 py-3 border-black"
                 >
 
                 @error('city') <p class="text-red-500 text-sm mb-1">{{ $message }}</p> @enderror
-                <select name="city" id="city" class="w-full border px-3 py-2 border-black" required>
+                <select name="city" id="city" class="w-full border px-3 py-3 border-black" required>
                     <option disabled {{ old('city') ? '' : 'selected' }}>City</option>
                     <option value="Colombo" {{ old('city') === 'Colombo' ? 'selected' : '' }}>Colombo</option>
                     <option value="Kandy" {{ old('city') === 'Kandy' ? 'selected' : '' }}>Kandy</option>
@@ -91,7 +105,7 @@
                     id="phone"
                     placeholder="Phone (optional)"
                     value="{{ old('phone') }}"
-                    class="w-full border px-3 py-2 border-black"
+                    class="w-full border px-3 py-3 border-black"
                 >
             </div>
 
