@@ -63,7 +63,7 @@
             </button>
 
             {{-- Profile Button --}}
-            <a href="{{ route('profile') }}" class="w-[90px] h-[32px] border-2 border-black bg-white text-black font-[Montserrat] text-[16px] flex items-center justify-center hover:font-bold">
+            <a href="{{ route('profile.show') }}" class="w-[90px] h-[32px] border-2 border-black bg-white text-black font-[Montserrat] text-[16px] flex items-center justify-center hover:font-bold">
                 Profile
             </a>
         </div>

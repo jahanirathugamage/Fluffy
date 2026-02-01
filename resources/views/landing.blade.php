@@ -29,7 +29,7 @@
                     <span class="font-bold">discounted membership rates</span> as part of our launch promotion.
                 </p>
             </div>
-            <a href="{{ route('membership') }}">
+            <a href="{{ route('landing') }}">
                 <button class="text-white text-[16px] md:text-[20px] bg-[#4FB5D0] font-bold w-[150px] h-[45px] border-[3px] border-black hover:bg-black mt-4">
                     JOIN NOW
                 </button>
@@ -69,7 +69,7 @@
                     Each box is a bundle of tail wags, happy purrs and planet-friendly love.
                 </p>
             </div>
-            <a href="{{ route('seasonal') }}">
+            <a href="{{ route('products.index', ['category' => 'seasonal']) }}">
                 <button class="text-white text-[16px] md:text-[20px] bg-[#69A985] font-bold w-[150px] h-[45px] border-[3px] border-black hover:bg-black mt-4">
                     GET IT
                 </button>

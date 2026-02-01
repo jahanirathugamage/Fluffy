@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
+use Laravel\Fortify\Contracts\LoginResponse;
+use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -22,7 +24,29 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register custom LoginResponse
+        $this->app->instance(LoginResponse::class, new class implements LoginResponse {
+            public function toResponse($request)
+            {
+                $user = auth()->user();
+
+                // Employee logic: role OR capability
+                if ($user && ($user->hasRole('employee') || $user->can('view-dashboard'))) {
+                    return redirect()->route('employee.manage-products');
+                }
+
+                // Default: customer landing
+                return redirect()->route('landing');
+            }
+        });
+
+        // Register custom LogoutResponse
+        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+            public function toResponse($request)
+            {
+                return redirect()->route('login');
+            }
+        });
     }
 
     /**
@@ -35,32 +59,6 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
-
-        /**
-         * ✅ Custom post-login redirect:
-         * - Employees (role OR permission) -> manage-products
-         * - Customers -> landing
-         *
-         * NOTE: Your app uses Spatie roles/permissions, so do NOT use `$user->role`.
-         */
-        Fortify::redirects('login', function () {
-            $user = auth()->user();
-
-            // Employee logic: role OR capability
-            if ($user && ($user->hasRole('employee') || $user->can('view-dashboard'))) {
-                return route('employee.manage-products');
-            }
-
-            // Default: customer landing
-            return route('landing');
-        });
-
-        /**
-         * ✅ Custom post-logout redirect to login page
-         */
-        Fortify::redirects('logout', function () {
-            return route('login');
-        });
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(
@@ -75,3 +73,4 @@ class FortifyServiceProvider extends ServiceProvider
         });
     }
 }
+

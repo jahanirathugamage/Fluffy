@@ -47,7 +47,7 @@
 
                 {{-- Action Buttons --}}
                 <div class="mt-4 md:mt-0 flex flex-col space-y-2 w-full md:w-48">
-                    <a href="{{ route('employee.orders.show', $order) }}" class="nav-link w-full text-center bg-black text-white px-4 py-2 rounded-none text-sm font-medium hover:bg-gray-800 transition">
+                    <a href="{{ route('employee.order-details', $order) }}" class="nav-link w-full text-center bg-black text-white px-4 py-2 rounded-none text-sm font-medium hover:bg-gray-800 transition">
                         View Details
                     </a>
                     

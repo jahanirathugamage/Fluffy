@@ -13,7 +13,7 @@
                     <h1 class="text-[20px] md:text-[40px] font-medium">{{ $slide['title1'] }}</h1>
                     <h1 class="text-[30px] md:text-[60px] font-bold">{{ $slide['title2'] }}</h1>
 
-                    <a href="{{ route('cats') }}">
+                    <a href="{{ route('products.index', ['animal' => 'cat']) }}">
                         <button class="{{ $slide['btnColor'] }} text-white text-[20px] md:text-[24px] font-bold w-[130px] h-[45px] border-[3px] border-white mt-6">
                             {{ $slide['btnText'] }}
                         </button>

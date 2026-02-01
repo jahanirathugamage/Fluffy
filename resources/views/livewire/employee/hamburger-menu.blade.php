@@ -57,7 +57,7 @@
                         {{-- Manage Orders --}}
                         @can('manage-orders')
                             <li class="flex items-center justify-between group cursor-pointer" wire:click="close">
-                                <a href="{{ route('employee.orders.index') }}" class="block text-white font-[Montserrat] text-[20px] font-medium">
+                                <a href="{{ route('employee.orders') }}" class="block text-white font-[Montserrat] text-[20px] font-medium">
                                     Manage Orders
                                 </a>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-5 h-5 fill-white">
@@ -108,7 +108,7 @@
                         {{-- Manage Orders --}}
                         @can('manage-orders')
                             <li class="flex items-center justify-between group cursor-pointer" wire:click="close">
-                                <a href="{{ route('employee.orders.index') }}" class="block text-white font-[Montserrat] text-[20px] font-medium">
+                                <a href="{{ route('employee.orders') }}" class="block text-white font-[Montserrat] text-[20px] font-medium">
                                     Manage Orders
                                 </a>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" class="w-5 h-5 fill-white">
@@ -136,7 +136,7 @@
 
             {{-- Mobile: Profile + Logout (Image 2) --}}
             <div class="md:hidden bg-white w-full px-8 py-10 flex flex-col gap-6 items-center justify-center">
-                <a href="{{ route('profile') }}"
+                <a href="{{ route('profile.show') }}"
                    wire:click="close"
                    class="w-[160px] h-[48px] border-2 border-black bg-white text-black font-[Montserrat] text-[20px] flex items-center justify-center hover:font-bold">
                     Profile

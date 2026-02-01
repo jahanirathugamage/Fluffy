@@ -285,7 +285,7 @@
 
                 {{-- Mobile: Profile + Logout (centered) --}}
                 <div class="flex flex-col gap-6 md:hidden items-center">
-                    <a href="{{ route('profile') }}"
+                    <a href="{{ route('profile.show') }}"
                        wire:click="close"
                        class="w-[160px] h-[48px] border-2 border-black bg-white text-black font-[Montserrat] text-[20px] flex items-center justify-center hover:font-bold">
                         Profile

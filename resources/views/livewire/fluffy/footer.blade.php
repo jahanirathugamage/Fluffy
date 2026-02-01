@@ -23,11 +23,11 @@
                 <div>
                     <h3 class="font-bold mb-3 text-[18px]">SHOP FOR</h3>
                     <ul class="space-y-2 font-medium">
-                        <li class="hover:font-bold"><a href="{{ route('cats') }}">Cats</a></li>
-                        <li class="hover:font-bold"><a href="{{ route('dogs') }}">Dogs</a></li>
-                        <li class="hover:font-bold"><a href="{{ route('rabbits') }}">Rabbits</a></li>
-                        <li class="hover:font-bold"><a href="{{ route('hamsters') }}">Hamsters</a></li>
-                        <li class="hover:font-bold"><a href="{{ route('seasonal') }}">Seasonal boxes</a></li>
+                        <li class="hover:font-bold"><a href="{{ route('products.index', ['animal' => 'cat']) }}">Cats</a></li>
+                        <li class="hover:font-bold"><a href="{{ route('products.index', ['animal' => 'dog']) }}">Dogs</a></li>
+                        <li class="hover:font-bold"><a href="{{ route('products.index', ['animal' => 'rabbit']) }}">Rabbits</a></li>
+                        <li class="hover:font-bold"><a href="{{ route('products.index', ['animal' => 'hamster']) }}">Hamsters</a></li>
+                        <li class="hover:font-bold"><a href="{{ route('products.index', ['category' => 'seasonal']) }}">Seasonal boxes</a></li>
                     </ul>
                 </div>
 
