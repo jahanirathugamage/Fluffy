@@ -8,11 +8,11 @@ use App\Models\Product;
 class TopPicksCarousel extends Component
 {
     public int $current = 0;
-    public int $perPage = 3;
+    public int $perPage = 4;
 
     public function getProductsProperty()
     {
-        return Product::inRandomOrder()->take(6)->get();
+        return Product::inRandomOrder()->take(8)->get();
     }
 
     public function totalPages(): int
