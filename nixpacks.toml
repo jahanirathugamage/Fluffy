@@ -2,31 +2,27 @@
 # This file instructs Railway's builder (Nixpacks) how to build and run the app.
 
 [phases.setup]
-# Ensure we have PHP 8.2, necessary extensions, and Node.js for frontend assets
 nixPkgs = [
-    "php82",
-    "php82Extensions.pdo_mysql",
-    "php82Extensions.bcmath",
-    "php82Extensions.gd",
-    "php82Extensions.intl",
-    "php82Extensions.zip",
-    "nodejs_20", 
-    "npm-9_x"
+  "php82",
+  "php82Extensions.pdo_mysql",
+  "php82Extensions.bcmath",
+  "php82Extensions.gd",
+  "php82Extensions.intl",
+  "php82Extensions.zip",
+  "nodejs_20",
+  "npm-9_x"
 ]
 
 [phases.build]
-# Run dependency installation and build frontend assets
 cmds = [
-    "composer install --no-dev --optimize-autoloader",
-    "npm ci",
-    "npm run build",
-    "php artisan config:cache",
-    "php artisan route:cache",
-    "php artisan view:cache"
+  "composer install --no-dev --optimize-autoloader",
+  "npm ci",
+  "npm run build",
+  "php artisan optimize:clear",
+  "php artisan config:cache",
+  "php artisan route:cache",
+  "php artisan view:cache"
 ]
 
 [start]
-# Run migrations efficiently and start the server
-# Note: 'php artisan serve' is simple and works well for Railway demo deployments.
-# For high-traffic production, consider setting up Nginx, but this is sufficient for getting started.
-cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
