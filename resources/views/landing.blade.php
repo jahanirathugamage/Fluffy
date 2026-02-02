@@ -95,7 +95,6 @@
             </div>
         </div>
 
-        {{-- ✅ Footer (Livewire) --}}
-        <livewire:fluffy.footer />
+
     </div>
 </x-app-layout>

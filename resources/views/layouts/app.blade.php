@@ -60,13 +60,11 @@
                 {{ $slot }}
             </main>
 
-            @auth
-                @if(!auth()->user()->hasRole('employee') && !auth()->user()->can('view-dashboard'))
-                    @livewire('fluffy.footer')
-                @else
-                    @livewire('employee.footer')
-                @endif
-            @endauth
+            @if(auth()->check() && (auth()->user()->hasRole('employee') || auth()->user()->can('view-dashboard')))
+                @livewire('employee.footer')
+            @else
+                @livewire('fluffy.footer')
+            @endif
         </div>
 
         @stack('modals')
