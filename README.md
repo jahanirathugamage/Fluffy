@@ -1,59 +1,97 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><img src="public/assets/images/fluffy-logo.png" width="200" alt="Fluffy Logo"></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Fluffy - Premium Pet Food Store
 
-## About Laravel
+Fluffy is a modern e-commerce platform built with **Laravel 11**, designed for selling premium pet food for cats and dogs. It features a complete shopping experience for customers and a comprehensive management dashboard for employees.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Technology Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Framework**: Laravel 11
+- **Frontend**: Livewire 3 + Blade Components
+- **Styling**: Tailwind CSS
+- **Authentication**: Laravel Jetstream (Fortify + Sanctum)
+- **Authorization**: Spatie Laravel Permission (RBAC)
+- **Database**: MySQL
+- **Payments**: Stripe API Integration
+- **API**: RESTful API (v1) with Sanctum Token Authentication
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Key Features
 
-## Learning Laravel
+### 🛍️ Client Side (Customers)
+- **Product Catalog**: Browse products by category (Wet/Dry Food) or animal (Cat/Dog).
+- **Filtering**: Filter by price, stock status, and category.
+- **Shopping Cart**: Real-time cart management (Add/Remove/Update).
+- **Checkout**: Integrated Stripe payment flow (Secure Card Processing).
+- **Order History**: Track past orders and delivery status.
+- **Favorites**: Wishlist functionality for authenticated users.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 🏢 Admin Side (Employees)
+- **Dashboard**: Overview of key metrics.
+- **Product Management**: CRUD operations for products (Create, Edit, Delete).
+- **Inventory Control**: Manage stock levels, prices, and specifications (variants).
+- **Order Management**: View and process customer orders.
+- **Role-Based Access**: Strict separation between Employee and Customer areas.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 📱 API (Mobile Ready)
+- **Sanctum Authentication**: Secure token-based auth for mobile apps.
+- **Endpoints**: Full coverage for Products, Orders, and Auth.
+- **Versioning**: `v1` prefix for future-proofing.
+- **Security**: Rate limiting and Input validation enforced.
 
-## Laravel Sponsors
+## 🛠️ Installation & Setup
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/yourusername/fluffy.git
+    cd fluffy
+    ```
 
-### Premium Partners
+2.  **Install Dependencies**
+    ```bash
+    composer install
+    npm install
+    ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+3.  **Environment Setup**
+    Copy the example env file and configure your database and Stripe credentials.
+    ```bash
+    cp .env.example .env
+    php artisan key:generate
+    ```
+    *Update `.env` with your DB credentials (`DB_DATABASE`, `DB_USERNAME`, etc.) and Stripe keys (`STRIPE_KEY`, `STRIPE_SECRET`).*
 
-## Contributing
+4.  **Database Migration & Seeding**
+    Run migrations and seed the database with default roles, permissions, and products.
+    ```bash
+    php artisan migrate --seed
+    ```
+    *This will create the `customer` and `employee` roles and a default employee user.*
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+5.  **Run the Application**
+    Start the Vite dev server and the PHP server.
+    ```bash
+    npm run dev
+    # In a separate terminal
+    php artisan serve
+    ```
 
-## Code of Conduct
+## 👤 Default Accounts
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+The seeder creates the following default accounts for testing:
 
-## Security Vulnerabilities
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Employee** | `employee@fluffy.com` | `Employee@12345
+| **Customer** | `customer@fluffy.com` | `Customer@12345
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🔒 Security Measures
 
-## License
+- **CSRF Protection**: Enabled on all web forms.
+- **XSS Prevention**: Automatic escaping in Blade templates.
+- **SQL Injection**: Uses Eloquent ORM / Parameterized queries.
+- **HTTPS**: Enforced in Production environment.
+- **Secure Cookies**: HttpOnly and Secure flags enabled for sessions.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
