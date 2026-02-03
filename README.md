@@ -1,12 +1,12 @@
-<p align="center"><img src="public/assets/images/fluffy-logo.png" width="200" alt="Fluffy Logo"></p>
+<p align="center"><img src="public/assets/images/fluffy-blue.png" width="200" alt="Fluffy Logo"></p>
 
-# Fluffy - Premium Pet Food Store
+# Fluffy - Premium Pet Supplies Store
 
-Fluffy is a modern e-commerce platform built with **Laravel 11**, designed for selling premium pet food for cats and dogs. It features a complete shopping experience for customers and a comprehensive management dashboard for employees.
+Fluffy is a modern e-commerce platform built with **Laravel 12**, designed for selling premium pet supplies. It features a complete shopping experience for customers and a comprehensive management dashboard for employees.
 
 ## 🚀 Technology Stack
 
-- **Framework**: Laravel 11
+- **Framework**: Laravel 12
 - **Frontend**: Livewire 3 + Blade Components
 - **Styling**: Tailwind CSS
 - **Authentication**: Laravel Jetstream (Fortify + Sanctum)
@@ -81,8 +81,8 @@ The seeder creates the following default accounts for testing:
 
 | Role | Email | Password |
 | :--- | :--- | :--- |
-| **Employee** | `employee@fluffy.com` | `Employee@12345
-| **Customer** | `customer@fluffy.com` | `Customer@12345
+| **Employee** | `employee@fluffy.com` | Employee@12345
+| **Customer** | `customer@fluffy.com` | Customer@12345
 
 ## 🔒 Security Measures
 
