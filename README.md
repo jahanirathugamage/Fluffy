@@ -18,7 +18,7 @@ Fluffy is a modern e-commerce platform built with **Laravel 12**, designed for s
 ## ✨ Key Features
 
 ### 🛍️ Client Side (Customers)
-- **Product Catalog**: Browse products by category (Wet/Dry Food) or animal (Cat/Dog).
+- **Product Catalog**: Browse products by category (Accessories, Food, Grooming and Toys) or animal (Cat/Dog/Hamster/Rabbit).
 - **Filtering**: Filter by price, stock status, and category.
 - **Shopping Cart**: Real-time cart management (Add/Remove/Update).
 - **Checkout**: Integrated Stripe payment flow (Secure Card Processing).
